@@ -162,7 +162,7 @@ class STM32USARTBootloader {
     }, callback)
   }
 
-  _cmdGo (address) {
+  _cmdGo (address, callback) {
     var len = 0
     if (!this._cmdIsAvailable(CMD_GO)) {
       return callback(new Error('Go command not available'))
