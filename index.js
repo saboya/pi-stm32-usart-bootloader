@@ -1,9 +1,7 @@
-var wpi = require('wiring-pi');
 var serialPort = require("serialport");
 var SerialPort = serialPort.SerialPort;
 var async = require('async');
 var BufferBuilder = require('buffer-builder');
-var fs = require('fs');
 
 const BOOT0_MAIN_FLASH = 0;
 const BOOT0_SYSTEM_MEMORY = 1;
@@ -28,43 +26,8 @@ const NACK = 0x1f;
 
 class STM32USARTBootloader {
     constructor(options) {
-        this._resetPin = options.resetPin;
-        this._boot0Pin = options.boot0Pin;
         this._serialPortPath = options.serialPortPath;
         this._serialPortBaudRate = options.serialPortBaudRate || 115200;
-
-        wpi.pinMode(this._boot0Pin, wpi.OUTPUT);
-
-        async.series([
-            this._setBoot0MainFlash.bind(this),
-            this._deassertReset.bind(this)
-        ], (err) => {
-            if (err) {
-                console.error('could not initialize', err);
-            }
-        });
-    }
-
-    _setBoot0MainFlash(callback) {
-        wpi.digitalWrite(this._boot0Pin, BOOT0_MAIN_FLASH);
-        callback();
-    }
-
-    _setBoot0SystemMemory(callback) {
-        wpi.digitalWrite(this._boot0Pin, BOOT0_SYSTEM_MEMORY);
-        callback();
-    }
-
-    _deassertReset(callback) {
-        wpi.digitalWrite(this._resetPin, 1);
-        wpi.pinMode(this._resetPin, wpi.OUTPUT);
-        callback();
-    }
-
-    _assertReset(callback) {
-        wpi.digitalWrite(this._resetPin, 0);
-        wpi.pinMode(this._resetPin, wpi.INPUT);
-        callback();
     }
 
     _openSerialPort(callback) {
@@ -337,10 +300,6 @@ class STM32USARTBootloader {
     _runSystemMemoryFn(fn, callback) {
         async.series([
             this._openSerialPort.bind(this),
-            this._assertReset.bind(this),
-            this._setBoot0SystemMemory.bind(this),
-            STM32USARTBootloader._sleep.bind(this, 10),
-            this._deassertReset.bind(this),
             STM32USARTBootloader._sleep.bind(this, 500),
             this._enterBootloader.bind(this),
             this._getCmd.bind(this),

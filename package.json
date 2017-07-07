@@ -17,6 +17,9 @@
     "wiring-pi": "^2.1.1"
   },
   "dependencies": {
-    "buffer-builder": "^0.2.0"
+    "async": "^2.5.0",
+    "buffer-builder": "^0.2.0",
+    "minimist": "^1.2.0",
+    "serialport": "^4.0.7"
   }
 }
