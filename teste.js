@@ -15,7 +15,7 @@ if(argv.p === undefined) {
   throw new Error('Especifique a porta')
 }
 
-let data = fs.readFileSync(path.join(__dirname, 'blink.bin'))
+let data = fs.readFileSync(path.join(__dirname, argv._[0]))
 
 
 let bootloader = new STM32USARTBootloader({
