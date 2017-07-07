@@ -297,6 +297,35 @@ class STM32USARTBootloader {
         );
     }
 
+    _cmdEraseAllExtended(callback) {
+        var len = 0;
+        if (!this._cmdIsAvailable(CMD_EXTENDED_ERASE)) {
+            return callback(new Error('Erase command not available'));
+        }
+        this._withTimeoutAndData(
+            (callback) => {
+                this._serialPort.write(new Buffer([CMD_EXTENDED_ERASE, ~CMD_EXTENDED_ERASE]), callback);
+            },
+            (data, callback) => {
+                if (data[0] != ACK) {
+                    return callback(new Error('Expected start ack (0x' + ACK.toString(16) + ') found 0x' + data[0].toString(16)));
+                }
+                len += data.length;
+                if (len == 2) {
+                    return callback();
+                }
+                console.log("Vou escrever na porta serial, bitch")
+                this._serialPort.write(new Buffer([0xff,0xff, 0x00]), (err) => {
+                    if (err) {
+                        return callback(err);
+                    }
+                });
+            },
+            30 * 1000,
+            callback
+        );
+    }
+
     _runSystemMemoryFn(fn, callback) {
         async.series([
             this._openSerialPort.bind(this),
