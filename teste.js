@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 const STM32USARTBootloader = require('./index')
+const fs = require('fs')
+const path = require('path')
 const argv = require('minimist')(process.argv.slice(2), {
   alias: {
     p: 'port',
