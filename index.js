@@ -154,7 +154,7 @@ class STM32USARTBootloader {
     flash(address, data, callback) {
         this._runSystemMemoryFn((callback) => {
             async.series([
-                this._cmdEraseAll.bind(this),
+                this._cmdEraseAllExtended.bind(this),
                 this._writeAll.bind(this, address, data)
             ], callback);
         }, callback);
