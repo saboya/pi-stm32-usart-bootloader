@@ -33,12 +33,12 @@ class STM32USARTBootloader {
     _openSerialPort(callback) {
         this._serialPort = new SerialPort(this._serialPortPath, {
             baudrate: this._serialPortBaudRate,
+            autoOpen: true,
             dataBits: 8,
             parity: 'even',
             stopBits: 1,
             parser: serialPort.parsers.raw
-        }, false);
-        this._serialPort.open(callback);
+        }, callback);
     }
 
     _closeSerialPort(callback) {
@@ -307,10 +307,7 @@ class STM32USARTBootloader {
             fn
         ], (err) => {
             async.series([
-                this._assertReset.bind(this),
-                this._setBoot0MainFlash.bind(this),
                 this._closeSerialPort.bind(this),
-                this._deassertReset.bind(this)
             ], (innerErr) => {
                 if (innerErr) {
                     return callback(innerErr);
