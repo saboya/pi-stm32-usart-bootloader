@@ -180,7 +180,7 @@ class STM32USARTBootloader {
           return callback()
         }
         let checksum = 0x08 ^  0x00 ^ 0x00 ^ 0x00
-        this._serialPort.write(new Buffer([0x08, 0x00, 0x00, 0x00]), (err) => {
+        this._serialPort.write(new Buffer([0x08, 0x00, 0x00, 0x00, checksum]), (err) => {
           if (err) {
             return callback(err)
           }
